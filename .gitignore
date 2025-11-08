@@ -1,0 +1,2 @@
+# Ignorar arquivos .exe gerados durante os testes para evitar enviá-los ao GitHub
+*.exe
