@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <windows.h>
 #include <stdlib.h>
+#include <time.h>
+#include <conio.h>
 
 int main(){
-	
+	srand(time(NULL));
+
 	// Tabela visual representando as cartas 
 	char tabela[4][6] = {
 	{'?','?','?','?','?','?'},
@@ -11,14 +14,41 @@ int main(){
 	{'?','?','?','?','?','?'},
 	{'?','?','?','?','?','?'}
 	};
-	
-	// Lista todas as combinações
-	char cartas[4][6] = {
-	{'A','O','F','E','C','U'},
-	{'P','G','B','D','D','I'},
-	{'F','A','P','H','U','C'},
-	{'O','G','B','H','E','I'}
+
+	// Lista de todas as combinações
+	char combinacoes[4][6] = {
+	{'A','A','B','B','C','C'},
+	{'D','D','E','E','F','F'},
+	{'G','G','H','H','I','I'},
+	{'J','J','K','K','L','L'},
 	};
+	
+	// cartas embaralhadas
+	char cartas[4][6] = {
+	{'?','?','?','?','?','?'},
+	{'?','?','?','?','?','?'},
+	{'?','?','?','?','?','?'},
+	{'?','?','?','?','?','?'}
+	};
+
+	// embaralhar combinacoes para a lista de cartas
+	int altura_random, largura_random, altura, largura;
+	altura = largura = 0;
+	for(int i = 0; i < 24; i++){
+		while(1){
+			altura_random  = rand() % 4;
+			largura_random = rand() % 6;
+			if (cartas[altura_random][largura_random] == '?'){
+				cartas[altura_random][largura_random] = combinacoes[altura][largura];
+				break;
+			}
+		}
+		largura++;
+		if(largura > 5){
+			largura = 0;
+			altura++;
+		}
+	}
 	
 	// Pontuação máxima: 12
 	int pontos              = 0;
@@ -36,14 +66,14 @@ int main(){
 		printf("acertos: %d/12\n\n",pontos);
 		
 		// imprimir tabela no terminal:
-		printf("    1   2   3   4   5   6\n  _________________________\n");
+		printf("    1   2   3   4   5   6\n  +---+---+---+---+---+---+\n");
 		for(coluna = 0; coluna < 4; coluna++){
 			printf("%d ",coluna+1);
 			for(linha = 0; linha < 5; linha++){
 				printf("| %c ",tabela[coluna][linha]);
 			}
 			printf("| %c |\n",tabela[coluna][linha]);
-			printf("  |---|---|---|---|---|---|\n");
+			printf("  +---+---+---+---+---+---+\n");
 		}
 		
 		// Primeira escolha de carta
