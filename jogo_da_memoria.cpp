@@ -75,20 +75,32 @@ int main(){
 			printf("| %c |\n",tabela[coluna][linha]);
 			printf("  +---+---+---+---+---+---+\n");
 		}
+			
+		printf("\nRodada do Jogador %d!\nTotal de pontos: %d\nEscolha a carta que deseja revelar, seguindo a ordem: [linha][coluna].\n\n",jogador+1,jogadores_pontos[jogador]);
 		
 		// Primeira escolha de carta
-		printf("\nRodada do Jogador %d!\nTotal de pontos: %d\nEscolha a carta que deseja revelar, seguindo a ordem: [linha][coluna].\nPrimeira carta:",jogador+1,jogadores_pontos[jogador]);
-		scanf("%s", escolha);
-		posicoes[0] = escolha[0] - '0'; // Converter char pra int
-		posicoes[1] = escolha[1] - '0'; // Converter char pra int
-		printf("%c\n",cartas[posicoes[0]-1][posicoes[1]-1]);
+		while(1){
+			printf("Primeira carta:");
+			scanf("%s", escolha);
+			posicoes[0] = escolha[0] - '0'; // Converter char pra int
+			posicoes[1] = escolha[1] - '0'; // Converter char pra int
+			if((posicoes[0] < 7) && (posicoes[0] > 0) && (posicoes[1] < 7) && (posicoes[1] > 0) && (tabela[posicoes[0]-1][posicoes[1]-1] == '?')){
+				break;
+			}
+		}
+		printf("valor da carta[%d][%d]: %c\n\n",posicoes[0],posicoes[1],cartas[posicoes[0]-1][posicoes[1]-1]);
 		
 		// Segunda escolha de carta
-		printf("Segunda carta:");
-		scanf("%s", escolha);
-		posicoes[2] = escolha[0] - '0'; // Converter char pra int
-		posicoes[3] = escolha[1] - '0'; // Converter char pra int
-		printf("%c\n",cartas[posicoes[2]-1][posicoes[3]-1]);
+		while(1){
+			printf("Segunda carta:");
+			scanf("%s", escolha);
+			posicoes[2] = escolha[0] - '0'; // Converter char pra int
+			posicoes[3] = escolha[1] - '0'; // Converter char pra int
+			if((posicoes[2] < 7) && (posicoes[2] > 0) && (posicoes[3] < 7) && (posicoes[3] > 0) && (tabela[posicoes[2]-1][posicoes[3]-1] == '?') && (posicoes[0] != posicoes[2] || posicoes[1] != posicoes[3])){
+				break;
+			}
+		}
+		printf("valor da carta[%d][%d]: %c\n",posicoes[2],posicoes[3],cartas[posicoes[2]-1][posicoes[3]-1]);
 		
 		
 		// Tempo para visualizar o valor da carta:
