@@ -7,55 +7,87 @@
 // o jogador:
 typedef struct {
     char nome[50];
-    int pontos;
+    int  pontos;
 } Jogador;
 
-// ================================= FUNCOES DO JOGO =================================
+// ----------------------------------------------------------------------
+//                              FUNÇÕES DO JOGO
+// ----------------------------------------------------------------------
 
-// =============== Funcao que embaralha as cartas ===============
-// Distribuir as cartas da matriz "combinacoes"
-// aleatoriamente dentro da matriz "cartas"
+//  Função:  embaralhar_cartas
+//  Entradas:
+//      - cartas:      Matriz com as cartas usadas no jogo
+//      - combinacoes: Matriz com as combinações que serão embaralhadas
+//
+//  Lógica:
+//      - Para cada item em "combinacoes", seleciona uma posição aleatória na matriz "cartas" e armazena.
+//
+//  Saída:
+//      - As combinações embaralhadas aleatoriamente dentro da matriz "cartas".
+
 void embaralhar_cartas(char cartas[6][6], char combinacoes[6][6]){
 	int altura_random, largura_random, altura, largura;
 	altura = largura = 0;
-	int carta;
-	for(carta = 0; carta < 36; carta++){
-		// Tenta colocar uma carta em uma posicao vazia do tabuleiro
-		while(1){
+	
+	int carta_escolhida;
+	
+	for(carta_escolhida = 0; carta_escolhida < 36; carta_escolhida++){
+		
+		do{
 			altura_random  = rand() % 6; // escolher um valor de 0 a 5
 			largura_random = rand() % 6; // escolher um valor de 0 a 5
-			if (cartas[altura_random][largura_random] == '*'){
-				cartas[altura_random][largura_random] = combinacoes[altura][largura];
-				break;
-			}
-		}
+		}while (cartas[altura_random][largura_random] != '*'); // Loop: só sai quando uma posição vazia ('*') for encontrada
+		
+		// Copia a carta de "combinacoes" para a posição aleatória disponível em "cartas"
+		cartas[altura_random][largura_random] = combinacoes[altura][largura];
+		
 		largura++;
-		if(largura > 5){
+		if(largura == 6){
 			largura = 0;
 			altura++;
 		}
 	}
 }
 
-// ============ Funcao para exibir o comeco do jogo ============ 
-// Mostra total de combinacoes encontradas, o tabuleiro,
-// de quem e a rodada e as instrucoes basicas.
-void exibir_inicio_jogo(char nome[],int pontos, char tabela[6][6], int jogador, int multiplayer, int *jogadores_pontos, int computador) {
-    int linha, coluna;
-	
-	// Exibe as regras:
-	if(!computador){
-    	printf("Regras:\nEscolha 2 cartas por rodada (linha+coluna juntas, ex: 1 e 2 = 12).\nPar = 1 ponto e joga de novo.\nNao formar par = cartas viram e troca a vez.\nTermina ao achar as 18 combinacoes.\n");
-    	printf("---------------------------------------------------------------------\n");
-	}
+// ----------------------------------------------------------------------
 
-    // Exibe total de acertos:
-    printf("Acertos: %d/18\n\n", pontos);
+//  Função:  exibir_inicio_jogo
+//  Entradas:
+//  	- nome_jogador:            Nome do jogador (se houver)
+//      - combinacoes_encontradas: Total de combinações encontradas
+//  	- tabela:                  Matriz representando o tabuleiro a ser exibido
+//  	- jogador_rodada:          Jogador da rodada atual
+//   	- multiplayer:             (0 ou 1) indicando se o modo é multiplayer
+//   	- jogadores_pontos:        Vetor com o total de pontos de cada jogador
+//   	- computador_rodada:       (0 ou 1) indicando se é a rodada do computador
+//
+//  Lógica:
+//   	- Imprime as regras se for rodada de um jogador
+//   	- Mostra o total de combinações encontradas
+//   	- Exibe visualmente a tabela no terminal
+//  	- Indica de quem é a rodada
+//   	- Mostra os pontos do jogador da rodada
+//
+//  Saída:
+//   	- Visualização do início da rodada no terminal
+
+void exibir_inicio_jogo(char nome_jogador[],int combinacoes_encontradas, char tabela[6][6], int jogador_rodada, int multiplayer, int *jogadores_pontos, int computador_rodada) {
+    int linha, coluna;
     
-    // Cabecalho do tabuleiro:
-    printf("\n   1  2  3  4  5  6\n");
+    // 1. Exibe as regras (apenas se não for o computador)
+    if (!computador_rodada) {
+    	puts("Regras:\nEscolha 2 cartas por rodada (linha+coluna juntas, ex: linha 1 e coluna 2 = 12).");
+    	puts("Par = 1 ponto e joga de novo.");
+    	puts("Nao formar par = cartas viram e troca a vez.");
+    	puts("Termina ao achar as 18 combinacoes.");
+    	puts("---------------------------------------------------------------------");
+    }
+
+    // 2. Exibe total de acertos
+    printf("Acertos: %d/18\n\n", combinacoes_encontradas);
     
-    // Imprime o tabuleiro:
+    // 3. Imprime o tabuleiro
+    puts("   1  2  3  4  5  6");
     for (coluna = 0; coluna < 6; coluna++) {
         printf("%d ", coluna + 1);
         for (linha = 0; linha < 5; linha++) {
@@ -64,27 +96,38 @@ void exibir_inicio_jogo(char nome[],int pontos, char tabela[6][6], int jogador, 
         printf(" %c \n", tabela[coluna][linha]);
     }
 
-    // Mensagem da rodada:
-    if (multiplayer) {
-        // Modo multiplayer:
-        printf("\nRodada do Jogador %d!\n", jogador + 1);
+    // 4. Mensagem da rodada
+    if ( multiplayer ) {      // Rodada multiplayer
+        printf("\nRodada do Jogador %d!\n", jogador_rodada + 1);
     } else {
-        // Modo singleplayer:
-        if (jogador) {
+        if ( jogador_rodada ) { // Rodada do computador
             printf("\nRodada do Computador!\n");
-        } else {
-            printf("\nRodada de %s!\n", nome);
+        } else {            // Rodada do jogador no modo singleplayer
+            printf("\nRodada de %s!\n", nome_jogador);
         }
     }
     
-    // Exibe a pontuacao:
-    printf("Total de pontos: %d\n", jogadores_pontos[jogador]);
+    // 5. Exibe pontuação
+    printf("Total de pontos: %d\n", jogadores_pontos[jogador_rodada]);
 }
 
-// ============ Funcao de pensamento do computador =============
-// Analisa a memoria do computador e procura por duas cartas
-// iguais que ja foram reveladas anteriormente. Se encontrar,
-// salva as posicoes das cartas em proxima_rodada_bot[].
+// ----------------------------------------------------------------------
+
+//  Função: pensamento_do_computador
+//  Entradas:
+//   	- memoria_das_cartas:   Matriz onde o computador armazena as cartas que já foram reveladas.
+//   	- memoria_das_posicoes: Matriz com as posições correspondentes de cada carta.
+//   	- proxima_rodada_bot:   Array onde o computador guarda as posições das cartas
+//                              que pretende jogar na próxima rodada.
+//
+//  Lógica:
+//   	- O computador analisa "memoria_das_cartas" procurando pares de cartas iguais
+//     	  em posições diferentes.
+//   	- Se encontrar um par, armazena as posições correspondentes em "proxima_rodada_bot".
+//
+//  Saída:
+//   	- Define em "proxima_rodada_bot" as posições da próxima jogada, se houver par encontrado.
+
 void pensamento_do_computador(char memoria_das_cartas[6][6], int memoria_das_posicoes[6][6], int *proxima_rodada_bot){
 	
 	// O valor que ele analisa:
@@ -128,24 +171,61 @@ void pensamento_do_computador(char memoria_das_cartas[6][6], int memoria_das_pos
 	}
 }
 
+// ----------------------------------------------------------------------
 
-// ======= Tempo pro jogador lembrar da posicao da carta =======
-// Mostra uma contagem regressiva no terminal, dando tempo para
-// o jogador memorizar as cartas reveladas antes delas virarem de novo.
+//  Função: tempo
+//  Entrada:
+//   	- number: Inteiro representando o tempo (em segundos) que a função irá contar.
+//
+//  Lógica:
+//   	- Realiza uma contagem regressiva de "number" até 0.
+//   	- Pausa 1 segundo a cada decremento.
+//
+//  Saída:
+//   	- Exibe a contagem regressiva no terminal.
+
 void tempo(int number){
 	printf("\n%d",number);
-	for(number-1;number > 1;number--){
-		printf("\b%d",number);
-		Sleep(1000); // Fun??o de windows.h
+	for( number-1 ; number > 1 ; number--){
+		printf("\b%d", number);
+		Sleep(1000); // Função de <windows.h>
 	}
 	printf("\b1\b");
 	Sleep(1000);
 }
 
-// =================== Jogada do computador ====================
-// Analisa "proxima_rodada_bot" se tiver algo ele pega os 2 valores para a jogada
-// Caso contrario, escolhe posicoes aleatorias validas.
-void rodada_do_computador(int pontos, char tabela[6][6], int jogador, int multiplayer, int *jogadores_pontos, int *proxima_rodada_bot, char *escolha, int *posicoes, char memoria_das_cartas[6][6], char cartas[6][6]){
+// ----------------------------------------------------------------------
+
+//  Função: rodada_do_computador
+//  Entrada:
+//   	- (As mesmas da função "exibir_inicio_jogo")
+//		- proxima_rodada_bot:  Vetor contendo jogadas previamente descobertas pelo
+//                             computador (ex.: posições de um par já identificado).
+//   	- escolha:             Array temporário usado para converter a jogada salva
+//                             (inteiro) para string e recuperar suas posições.
+//   	- posicoes:            Vetor onde serão salvas as posições escolhidas pelo
+//                             computador para a rodada atual.
+//   	- memoria_das_cartas:  Matriz onde o computador armazena cartas que já foram
+//                             reveladas no jogo.
+//   	- cartas:              Matriz contendo todas as cartas do tabuleiro.
+//
+//  Lógica:
+//   	- A função executa duas escolhas: a primeira carta e a segunda carta.
+//   	- Para cada carta:
+//        	1. Se existir uma jogada registrada em "proxima_rodada_bot", ela é usada.
+//        	2. Caso contrário, o computador escolhe uma posição aleatória válida:
+//           	- A carta escolhida deve estar oculta ('*').
+//           	- Na segunda jogada, a carta não pode ser a mesma da primeira.
+//   	- As posições escolhidas são salvas em "posicoes".
+//   	- A carta é revelada no tabuleiro e mostrada ao jogador.
+//   	- A função também registra a carta revelada na memória do computador.
+//
+//  Saída:
+//   	- Atualiza o vetor "posicoes" com as duas escolhas do computador, revelando
+//        ambas no tabuleiro para análise posterior.
+
+void rodada_do_computador(int combinacoes_encontradas, char tabela[6][6], int jogador_rodada, int multiplayer, int *jogadores_pontos, int *proxima_rodada_bot, char *escolha, int *posicoes, char memoria_das_cartas[6][6], char cartas[6][6]){
+	
 	int rodada;
 	for(rodada = 0; rodada < 4; rodada += 2){
 		if(!rodada){
@@ -184,15 +264,35 @@ void rodada_do_computador(int pontos, char tabela[6][6], int jogador, int multip
 		// aparecer valor na tabela:
 		tabela[posicoes[rodada]][posicoes[rodada+1]] = cartas[posicoes[rodada]][posicoes[rodada+1]];
 		system("cls");
-		exibir_inicio_jogo("nao" ,pontos, tabela, jogador, multiplayer, jogadores_pontos, 1);
+		exibir_inicio_jogo("nao" ,combinacoes_encontradas, tabela, jogador_rodada, multiplayer, jogadores_pontos, 1);
 		tempo(4);
 	}
 }
 
+// ----------------------------------------------------------------------
 
-// ===================== Jogada do jogador =====================
-// Espera a entrada correta do jogador. Quando ele fizer as 2 jogadas validas,
-// armazena as coordenadas em "posicoes" para analise posterior.
+// Função: rodada_do_player
+// Entradas:
+//   	- (As mesmas da função "exibir_inicio_jogo")
+//   	- escolha:             Array temporário usado para armazenar a entrada
+//                             digitada pelo jogador.
+//   	- posicoes:            Vetor onde serão salvas as posições escolhidas pelo
+//                             jogador para a rodada atual.
+//   	- memoria_das_cartas:  Matriz onde são registradas cartas reveladas, usada
+//                             pelo computador apenas no modo singleplayer.
+//   	- cartas:              Matriz contendo todas as cartas reais do tabuleiro.
+//
+//  Lógica:
+//   	- A função solicita ao jogador que escolha duas cartas (primeira e segunda).
+//   	- Cada escolha é convertida e armazenada em "posicoes".
+//   	- A carta correspondente é revelada no tabuleiro e exibida na tela.
+//   	- Caso esteja no modo singleplayer, a carta revelada também é armazenada na
+//        memória do computador ("memoria_das_cartas") para uso posterior.
+//
+//  Saída:
+//   	- Atualiza o vetor "posicoes" com as duas escolhas feitas pelo jogador,
+//        revelando ambas no tabuleiro para análise da jogada atual.
+
 void rodada_do_player(char nome[],char memoria_das_cartas[6][6], char *escolha, int *posicoes, char tabela[6][6], char cartas[6][6], int pontos,int jogador, int multiplayer, int *jogadores_pontos){
 	int rodada;
 	for(rodada = 0;rodada < 4;rodada += 2){
@@ -223,7 +323,49 @@ void rodada_do_player(char nome[],char memoria_das_cartas[6][6], char *escolha, 
 	tempo(3);
 }
 
-// ==================== O Jogodo da memoria ====================
+// -----------------------------------------------------------------------------
+
+// Função: jogo_da_memoria
+// Entradas:
+//   - ranking:   Índice onde o jogador será salvo no sistema de ranking ao final.
+//   - jogadores: Array contendo os dados dos jogadores armazenados.
+//
+// Lógica:
+//   - Pergunta ao usuário o modo de jogo e armazena em "multiplayer".
+//   - Se o modo for singleplayer, solicita o nome do jogador.
+//
+//   - Cria todas as matrizes necessárias para o funcionamento do jogo:
+//       1. tabela:               Representação visual das cartas mostradas ao jogador.
+//       2. combinacoes:          Lista com todas as combinações possíveis.
+//       3. cartas:               As cartas reais embaralhadas no tabuleiro.
+//       4. memoria_das_cartas:   Memória do computador (singleplayer) para lembrar cartas reveladas.
+//       5. memoria_das_posicoes: Posições correspondentes às cartas para lógica do bot.
+//
+//   - Cria listas e variáveis auxiliares:
+//       1. proxima_rodada_bot:   Próxima jogada planejada pelo computador.
+//       2. pontos:               Total de combinações encontradas no jogo.
+//       3. jogadores_pontos:     Pontuação individual de cada jogador.
+//       4. jogador:              Indica de quem é a vez (0 = jogador 1, 1 = jogador 2/computador).
+//
+//   - Embaralha as cartas chamando a função apropriada.
+//
+//   - Entra no loop principal do jogo:
+//       1. Recebe as posições escolhidas na rodada e as armazena em "posicoes".
+//       2. Analisa as posições para verificar se formam uma combinação válida.
+//       3. Caso positivo, incrementa:
+//             - "pontos" (total geral)
+//             - "jogadores_pontos[jogador]"
+//       4. Se o jogador acertar, joga novamente; caso contrário, passa a vez
+//          para o próximo jogador ou para o computador.
+//
+//   - Após o fim do jogo:
+//       - Exibe quem venceu e os pontos de cada jogador.
+//       - Se o modo for singleplayer, salva na memória o nome do jogador e sua pontuação.
+//
+// Saída:
+//   - Executa o jogo completo e registra pontuações quando aplicável.
+// -----------------------------------------------------------------------------
+
 void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	
 	// Entrada do usuario para definir o modo de jogo atual
@@ -292,26 +434,25 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	
 	// Proxima jogada do computador caso encontre cartas iguais em posi??es diferentes
 	int  proxima_rodada_bot[2] = { 0,0 };
-	
-	embaralhar_cartas(cartas, combinacoes);
-	
 	// Total de combinacoes para acabar o jogo: 18
-	int pontos              = 0;
+	int pontos                 = 0;
 	// Pontuacao dos jogadores: [Jogador 1] e [Jogador 2]
-	int jogadores_pontos[2] = {0,0};
+	int jogadores_pontos[2]    = {0,0};
 	// Alterna o jogador a cada rodada
 	// jogador 1 = false
 	// jogador 2 = true
-	int jogador             = 0;
+	int jogador                = 0;
+	
+	embaralhar_cartas(cartas, combinacoes);
 	
 	// Loop principal do jogo:
 	while(pontos < 18){
 		int  posicoes[4];  // [linha 1], [coluna 1], [linha 2], [coluna 2]
 		char escolha[3];   // [linha], [coluna] 
 		
-		if (!multiplayer){
+		if (!multiplayer && !jogador){
 			exibir_inicio_jogo(player.nome ,pontos, tabela, jogador, multiplayer, jogadores_pontos, 0);
-		} else {
+		} else if (!jogador) {
 			exibir_inicio_jogo("nao",pontos, tabela, jogador, multiplayer, jogadores_pontos, 0);
 		}
 		
@@ -382,7 +523,9 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	
 }
 
-// ===================================================================================
+// ----------------------------------------------------------------------
+//                              MENU DO JOGO
+// ----------------------------------------------------------------------
 
 int main(){
 	// srand() --> Define a semente usada pela funcao rand().
@@ -449,9 +592,9 @@ int main(){
 			        printf("Erro ao abrir o arquivo para leitura!\n");
 			        return 1;
 			    }
-			    printf("Jogadores lidos do arquivo:\n\n");
+			    printf("Jogadores:\n\n");
 			    while (fscanf(arquivo, "%49s %d", nome, &pontos) == 2) {
-			        printf("Nome: %s, Pontos: %d\n", nome, pontos);
+			        printf("%s -> Pontos: %d\n", nome, pontos);
 			    }
 			
 			    fclose(arquivo);
