@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <windows.h> // limpar terminal
+#include <windows.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
@@ -10,16 +10,17 @@ typedef struct {
     int pontos;
 } Jogador;
 
-// ================================= FUN��ES DO JOGO =================================
+// ================================= FUNCOES DO JOGO =================================
 
-// =============== Fun��o que embaralha as cartas ===============
+// =============== Funcao que embaralha as cartas ===============
 // Distribuir as cartas da matriz "combinacoes"
 // aleatoriamente dentro da matriz "cartas"
 void embaralhar_cartas(char cartas[6][6], char combinacoes[6][6]){
 	int altura_random, largura_random, altura, largura;
 	altura = largura = 0;
-	for(int carta = 0; carta < 36; carta++){
-		// Tenta colocar uma carta em uma posi��o vazia do tabuleiro
+	int carta;
+	for(carta = 0; carta < 36; carta++){
+		// Tenta colocar uma carta em uma posicao vazia do tabuleiro
 		while(1){
 			altura_random  = rand() % 6; // escolher um valor de 0 a 5
 			largura_random = rand() % 6; // escolher um valor de 0 a 5
@@ -36,9 +37,9 @@ void embaralhar_cartas(char cartas[6][6], char combinacoes[6][6]){
 	}
 }
 
-// ============ Fun��o para exibir o come�o do jogo ============ 
-// Mostra total de combina��es encontradas, o tabuleiro,
-// de quem � a rodada e as instru��es b�sicas.
+// ============ Funcao para exibir o comeco do jogo ============ 
+// Mostra total de combinacoes encontradas, o tabuleiro,
+// de quem e a rodada e as instrucoes basicas.
 void exibir_inicio_jogo(char nome[],int pontos, char tabela[6][6], int jogador, int multiplayer, int *jogadores_pontos, int computador) {
     int linha, coluna;
 	
@@ -51,7 +52,7 @@ void exibir_inicio_jogo(char nome[],int pontos, char tabela[6][6], int jogador, 
     // Exibe total de acertos:
     printf("Acertos: %d/18\n\n", pontos);
     
-    // Cabe�alho do tabuleiro:
+    // Cabecalho do tabuleiro:
     printf("\n   1  2  3  4  5  6\n");
     
     // Imprime o tabuleiro:
@@ -76,17 +77,17 @@ void exibir_inicio_jogo(char nome[],int pontos, char tabela[6][6], int jogador, 
         }
     }
     
-    // Exibe a pontua��o:
+    // Exibe a pontuacao:
     printf("Total de pontos: %d\n", jogadores_pontos[jogador]);
 }
 
-// ============ Fun��o de pensamento do computador =============
-// Analisa a mem�ria do computador e procura por duas cartas
-// iguais que j� foram reveladas anteriormente. Se encontrar,
-// salva as posi��es das cartas em proxima_rodada_bot[].
+// ============ Funcao de pensamento do computador =============
+// Analisa a memoria do computador e procura por duas cartas
+// iguais que ja foram reveladas anteriormente. Se encontrar,
+// salva as posicoes das cartas em proxima_rodada_bot[].
 void pensamento_do_computador(char memoria_das_cartas[6][6], int memoria_das_posicoes[6][6], int *proxima_rodada_bot){
 	
-	// O valor que ele an�lisa:
+	// O valor que ele analisa:
 	int largura_fixa      = 0;
 	int altura_fixa       = 0;
 	
@@ -97,11 +98,12 @@ void pensamento_do_computador(char memoria_das_cartas[6][6], int memoria_das_pos
 	// Quando achar sai do loop
 	int acabar_pensamento = 0;
 	
-	// Percorre toda a tabela "memoria_das_cartas" para an�lise
-	for (int i = 0; i < 36; i++){
-		// Verifica o valor em uma posi��o espec�fica da tabela:
-		for(int a = 0; a < 36; a++){
-		// Procura na tabela uma carta igual � analisada, mas em posi��o diferente
+	// Percorre toda a tabela "memoria_das_cartas" para analise
+	int fixo, dinamico;
+	for ( fixo = 0; fixo < 36; fixo++){
+		// Verifica o valor em uma posicao especefica da tabela:
+		for( dinamico = 0; dinamico < 36; dinamico++){
+		// Procura na tabela uma carta igual a analisada, mas em posicao diferente
 			if((memoria_das_cartas[altura_fixa][largura_fixa] == memoria_das_cartas[altura_dinamica][largura_dinamica])&&(memoria_das_posicoes[altura_fixa][largura_fixa] != memoria_das_posicoes[altura_dinamica][largura_dinamica])&&(memoria_das_cartas[altura_fixa][largura_fixa] != '*')){
 				proxima_rodada_bot[0] = memoria_das_posicoes[altura_fixa][largura_fixa];
 				proxima_rodada_bot[1] = memoria_das_posicoes[altura_dinamica][largura_dinamica];
@@ -134,7 +136,7 @@ void tempo(int number){
 	printf("\n%d",number);
 	for(number-1;number > 1;number--){
 		printf("\b%d",number);
-		Sleep(1000); // Fun��o de windows.h
+		Sleep(1000); // Fun??o de windows.h
 	}
 	printf("\b1\b");
 	Sleep(1000);
@@ -142,9 +144,10 @@ void tempo(int number){
 
 // =================== Jogada do computador ====================
 // Analisa "proxima_rodada_bot" se tiver algo ele pega os 2 valores para a jogada
-// Caso contr�rio, escolhe posi��es aleat�rias v�lidas.
+// Caso contrario, escolhe posicoes aleatorias validas.
 void rodada_do_computador(int pontos, char tabela[6][6], int jogador, int multiplayer, int *jogadores_pontos, int *proxima_rodada_bot, char *escolha, int *posicoes, char memoria_das_cartas[6][6], char cartas[6][6]){
-	for(int rodada = 0; rodada < 4; rodada += 2){
+	int rodada;
+	for(rodada = 0; rodada < 4; rodada += 2){
 		if(!rodada){
 			printf("O computador escolhe a primeira carta:");
 		} else {
@@ -156,12 +159,12 @@ void rodada_do_computador(int pontos, char tabela[6][6], int jogador, int multip
 		if(proxima_rodada_bot[rodada/2]){
 			// converter inteiro para string:
 			sprintf(escolha, "%d", proxima_rodada_bot[rodada/2]);
-			// Armazena as posi��es selecionadas para an�lise
+			// Armazena as posicoes selecionadas para analise
 			posicoes[rodada]   = (escolha[0] - '0') - 1;
 			posicoes[rodada+1] = (escolha[1] - '0') - 1;
 			proxima_rodada_bot[rodada/2] = 0;
 		} else {
-			// Seleciona cartas aleat�rias n�o reveladas caso n�o haja jogada futura registrada
+			// Seleciona cartas aleatorias nao reveladas caso nao haja jogada futura registrada
 			while(1){
 				posicoes[rodada]   = rand() % 6;
 				posicoes[rodada+1] = rand() % 6;
@@ -170,7 +173,7 @@ void rodada_do_computador(int pontos, char tabela[6][6], int jogador, int multip
 						memoria_das_cartas[posicoes[rodada]][posicoes[rodada+1]] = cartas[posicoes[rodada]][posicoes[rodada+1]];
 						break;
 					}
-				} else { // jogada 2 ( garanti que ele n�o vai escolher o mesmo valor da jogada anterior ).
+				} else { // jogada 2 ( garanti que ele nao vai escolher o mesmo valor da jogada anterior ).
 					if(tabela[posicoes[rodada]][posicoes[rodada+1]] == '*' && (posicoes[rodada] != posicoes[0] || posicoes[rodada+1] != posicoes[1]) ){
 						memoria_das_cartas[posicoes[rodada]][posicoes[rodada+1]] = cartas[posicoes[rodada]][posicoes[rodada+1]];
 						break;
@@ -188,10 +191,11 @@ void rodada_do_computador(int pontos, char tabela[6][6], int jogador, int multip
 
 
 // ===================== Jogada do jogador =====================
-// Espera a entrada correta do jogador. Quando ele fizer as 2 jogadas v�lidas,
-// armazena as coordenadas em "posicoes" para an�lise posterior.
+// Espera a entrada correta do jogador. Quando ele fizer as 2 jogadas validas,
+// armazena as coordenadas em "posicoes" para analise posterior.
 void rodada_do_player(char nome[],char memoria_das_cartas[6][6], char *escolha, int *posicoes, char tabela[6][6], char cartas[6][6], int pontos,int jogador, int multiplayer, int *jogadores_pontos){
-	for(int rodada = 0;rodada < 4;rodada += 2){
+	int rodada;
+	for(rodada = 0;rodada < 4;rodada += 2){
 		while(1){
 			if(!rodada){
 				printf("Primeira carta: ");
@@ -204,7 +208,7 @@ void rodada_do_player(char nome[],char memoria_das_cartas[6][6], char *escolha, 
 			if((posicoes[rodada] < 7) && (posicoes[rodada] > -1) && (posicoes[rodada+1] < 7) && (posicoes[rodada+1] > -1) && (tabela[posicoes[rodada]][posicoes[rodada+1]] == '*')){
 				tabela[posicoes[rodada]][posicoes[rodada+1]]               = cartas[posicoes[rodada]][posicoes[rodada+1]];
 				if(!multiplayer){
-				memoria_das_cartas[posicoes[rodada]][posicoes[rodada+1]]   = cartas[posicoes[rodada]][posicoes[rodada+1]]; // guardar na memoria do bot se n�o for multiplayer
+					memoria_das_cartas[posicoes[rodada]][posicoes[rodada+1]]   = cartas[posicoes[rodada]][posicoes[rodada+1]]; // guardar na memoria do bot se nao for multiplayer
 				}
 				system("cls");
 				if(!multiplayer){
@@ -222,7 +226,7 @@ void rodada_do_player(char nome[],char memoria_das_cartas[6][6], char *escolha, 
 // ==================== O Jogodo da memoria ====================
 void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	
-	// Entrada do usu�rio para definir o modo de jogo atual
+	// Entrada do usuario para definir o modo de jogo atual
 	int multiplayer;
 	printf("====== MODOS DE JOGO ======\n(0) -> Jogador vs Computador\n(1) -> Jogador vs Jogador\nDigite sua escolha (0 ou 1): ");
 	scanf("%d", &multiplayer);
@@ -231,8 +235,8 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 
 	if (!multiplayer){
 	    printf("Digite seu nome: ");
-	    scanf(" %49[^\n]", player.nome); // l� at� 49 caracteres ou Enter
-	    player.pontos = 0; // inicializa a pontua��o
+	    scanf(" %49[^\n]", player.nome); // l ate 49 caracteres ou Enter
+	    player.pontos = 0; // inicializa a pontuacao
 	}
 	system("cls");
 	
@@ -246,7 +250,7 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	{'*','*','*','*','*','*'}
 	};
 
-	// Lista de todas as combina��es
+	// Lista de todas as combinacoes
 	char combinacoes[6][6] = {
 	{'A','A','B','B','C','C'},
 	{'D','D','E','E','F','F'},
@@ -266,7 +270,7 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	{'*','*','*','*','*','*'}
 	};
 	
-	// Mem�ria do computador para armazenar as cartas 
+	// Memoria do computador para armazenar as cartas 
 	char memoria_das_cartas[6][6]   = {
 	{'*','*','*','*','*','*'},
 	{'*','*','*','*','*','*'},
@@ -276,7 +280,7 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	{'*','*','*','*','*','*'}
 	};
 	
-	// Armazena as posi��es das cartas no baralho para refer�ncia e compara��o
+	// Armazena as posicoes das cartas no baralho para referencia e comparacao
 	int  memoria_das_posicoes[6][6] = {
 	{11,12,13,14,15,16},
 	{21,22,23,24,25,26},
@@ -286,14 +290,14 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 	{61,62,63,64,65,66}
 	};
 	
-	// Pr�xima jogada do computador caso encontre cartas iguais em posi��es diferentes
+	// Proxima jogada do computador caso encontre cartas iguais em posi??es diferentes
 	int  proxima_rodada_bot[2] = { 0,0 };
 	
 	embaralhar_cartas(cartas, combinacoes);
 	
-	// Total de combina��es para acabar o jogo: 18
+	// Total de combinacoes para acabar o jogo: 18
 	int pontos              = 0;
-	// Pontua��o dos jogadores: [Jogador 1] e [Jogador 2]
+	// Pontuacao dos jogadores: [Jogador 1] e [Jogador 2]
 	int jogadores_pontos[2] = {0,0};
 	// Alterna o jogador a cada rodada
 	// jogador 1 = false
@@ -312,7 +316,7 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 		}
 		
 		
-		// L�gica de decis�o do computador durante sua vez:
+		// L?gica de decisao do computador durante sua vez:
 		if (!multiplayer && jogador){
 			pensamento_do_computador( memoria_das_cartas, memoria_das_posicoes, proxima_rodada_bot);
 		}
@@ -350,6 +354,7 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 		}
 	}
 	
+	// Fim do jogo:
 	switch (multiplayer) {
     case 0:
         if(jogadores_pontos[0] > jogadores_pontos[1]){
@@ -380,17 +385,17 @@ void jogo_da_memoria(int ranking, Jogador jogadores[100]){
 // ===================================================================================
 
 int main(){
-	// srand() --> Define a �semente� usada pela fun��o rand().
+	// srand() --> Define a semente usada pela funcao rand().
 	// time()  --> Retorna o tempo atual em segundos
 	srand(time(NULL));
-	// Faz com que "rand()" gere n�meros diferentes a cada execu��o.
+	// Faz com que "rand()" gere numeros diferentes a cada execucao.
 	
-	// Guardar informa��es dos jogadores.
+	// Guardar informacoes dos jogadores.
 	Jogador jogadores[100];
 	int ranking = 0;
 	
 	// ler quantidade de pessoas do arquivo "ranking.txt"
-	FILE *arquivo = fopen("ranking.txt", "a+"); // se n�o existir ele cria o arquivo  
+	FILE *arquivo = fopen("ranking.txt", "a+"); // se n?o existir ele cria o arquivo  
 	char nome[50];
 	int  pontos;
 	while (fscanf(arquivo, "%49s %d", nome, &pontos) == 2) {
@@ -423,7 +428,7 @@ int main(){
 			        return 1;
 			    }
 			    fprintf(arquivo, "%s %d\n", jogadores[ranking].nome, jogadores[ranking].pontos); // escreve no arquivo: NOME PONTOS
-			    fclose(arquivo); // fechar o arquivo depois que voc� terminar de usar ele.
+			    fclose(arquivo); // fechar o arquivo depois que voce terminar de usar ele.
 			    ranking++;
 			    
 				printf("Digite (s) e aperte Enter para voltar: ");
